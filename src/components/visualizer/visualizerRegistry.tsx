@@ -153,6 +153,11 @@ export type VisualizerDefinition = {
   component: React.ComponentType
 }
 
+type VisualizerMeta = {
+  icon: string
+  tags: string
+}
+
 export const VISUALIZERS: VisualizerDefinition[] = [
   {
     id: 'quantum-particles',
@@ -386,3 +391,46 @@ export const VISUALIZERS: VisualizerDefinition[] = [
     component: IconStorm
   }
 ]
+
+const VISUALIZER_META: Record<string, VisualizerMeta> = {
+  'quantum-particles': { icon: '✨', tags: 'particles, space, glow, audio' },
+  'neon-weave': { icon: '🕸️', tags: 'grid, synthwave, lines, motion' },
+  'plasma-orb': { icon: '🔮', tags: 'sphere, organic, glow, pulse' },
+  'liquid-mercury': { icon: '💧', tags: 'fluid, metal, distort, reactive' },
+  'gravity-well': { icon: '🕳️', tags: 'particles, physics, blackhole, audio' },
+  'cyber-tunnel': { icon: '🚇', tags: 'tunnel, speed, neon, cyber' },
+  'kaleido-sphere': { icon: '💠', tags: 'kaleidoscope, sphere, geometry' },
+  'aura-field': { icon: '🌫️', tags: 'fog, soft, ambient, glow' },
+  'circuit-city': { icon: '🌃', tags: 'grid, data, urban, bars' },
+  'voxel-waves': { icon: '🧱', tags: 'voxels, terrain, wave, geometry' },
+  'data-rain': { icon: '🔢', tags: 'matrix, code, data, fall' },
+  'nebula-cloud': { icon: '☁️', tags: 'clouds, space, gas, dreamy' },
+  'hypercube': { icon: '🧊', tags: '4d, cube, wireframe, geometry' },
+  'glitch-world': { icon: '📟', tags: 'glitch, digital, palette, invert' },
+  'spiral-galaxy': { icon: '🌌', tags: 'stars, spin, galaxy, particles' },
+  'solar-flare': { icon: '☀️', tags: 'sun, fire, rays, bright' },
+  'frequency-360': { icon: '📊', tags: 'bars, spectrum, round, audio' },
+  'electric-storm': { icon: '⚡', tags: 'lightning, bolts, flash, energy' },
+  'speed-warp': { icon: '🌠', tags: 'stars, fast, warp, space' },
+  'laser-grid': { icon: '🕹️', tags: '80s, synthwave, neon, grid' },
+  'pulsar-star': { icon: '🔔', tags: 'pulse, rings, center, space' },
+  'retro-oscilloscope': { icon: '📉', tags: '2d, wave, retro, spectrum' },
+  'vibrant-spectrum': { icon: '📶', tags: '2d, bars, spectrum, colorful' },
+  'radial-pulse': { icon: '⭕', tags: '2d, rings, pulse, center' },
+  'lava-lamp-2d': { icon: '🫧', tags: '2d, liquid, psychedelic, smooth' },
+  'neon-wavelet': { icon: '〰️', tags: '2d, wave, neon, layered' },
+  'gradient-flow': { icon: '🌈', tags: '2d, gradient, flow, soft' },
+  'neon-horizon': { icon: '🌃', tags: '2d, horizon, synthwave, neon' },
+  'cyber-rain': { icon: '🌧️', tags: '2d, cyber, rain, motion' },
+  'digital-pulse': { icon: '💥', tags: '2d, digital, pulse, energy' },
+  'vortex-2d': { icon: '🌀', tags: '2d, vortex, spiral, suction' },
+  'xp-bliss-warp': { icon: '🏞️', tags: '2d, retro, xp, landscape' },
+  'icon-storm': { icon: '💿', tags: 'retro, icons, chaos, 3d' }
+}
+
+export function getVisualizerMeta(visualizer: VisualizerDefinition): VisualizerMeta {
+  return VISUALIZER_META[visualizer.id] ?? {
+    icon: visualizer.dimension === '2D' ? '🫧' : '✨',
+    tags: `${visualizer.dimension.toLowerCase()}, audio-reactive`
+  }
+}

@@ -147,23 +147,15 @@ export function useMicrophoneAudio() {
           energyTotal += frequencyData[index]
         }
 
-        const centroid = energyTotal > 0
-          ? weightedTotal / energyTotal / frequencyData.length
-          : 0.5
-
+        const store = useVisualStore.getState()
+        const centroid =
+          energyTotal > 0 ? weightedTotal / energyTotal / frequencyData.length : 0.5
         const modifierX = clamp((centroid - 0.5) * 2.4, -1, 1)
         const modifierY = clamp((low - high) * 1.8, -1, 1)
 
-        const store = useVisualStore.getState()
         store.setFFTData(Float32Array.from(frequencyData))
         store.setAudioIntensity(smoothedLevel)
-        store.setVisualModifier(modifierX, modifierY)
-        store.setVisualParams({
-          speed: 0.9 + smoothedLevel * 2.4,
-          detail: clamp(0.35 + high * 0.7, 0.35, 1),
-          palette: centroid,
-          invert: high > 0.92 && smoothedLevel > 0.55
-        })
+        store.setAudioDrivenModifier(modifierX, modifierY)
 
         AudioVisualBridge.setAudioData({
           time: performance.now() / 1000,

@@ -105,12 +105,6 @@ button {
   padding-bottom: calc(16px + env(safe-area-inset-bottom));
 }
 
-.hud-bottom.is-collapsed {
-  width: auto;
-  right: 0;
-  left: auto;
-}
-
 .brand-chip,
 .scene-chip,
 .dock-panel {
@@ -201,11 +195,8 @@ button {
   overflow: hidden;
   border-radius: 28px;
   padding: 18px;
-}
-
-.dock-panel.is-collapsed {
-  padding: 12px;
-  border-radius: 999px;
+  display: flex;
+  flex-direction: column;
 }
 
 .dock-panel::before {
@@ -222,34 +213,7 @@ button {
   position: relative;
   display: flex;
   gap: 10px;
-}
-
-.dock-panel-head {
-  position: relative;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.dock-toggle {
-  min-height: 42px;
-  padding: 0 16px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: rgba(7, 11, 24, 0.84);
-  color: var(--text);
-  transition:
-    transform 180ms ease,
-    border-color 180ms ease,
-    background 180ms ease;
-}
-
-.dock-toggle:active {
-  transform: scale(0.98);
-}
-
-.dock-toggle:hover {
-  border-color: rgba(120, 245, 255, 0.45);
-  background: rgba(10, 16, 34, 0.96);
+  flex-wrap: wrap;
 }
 
 .dock-row + .dock-row,
@@ -265,8 +229,132 @@ button {
   align-items: stretch;
 }
 
+.quick-slots-row {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.quick-slots-row::-webkit-scrollbar {
+  display: none;
+}
+
+.quick-slot-button {
+  position: relative;
+  display: flex;
+  flex: 0 0 auto;
+  min-width: 86px;
+  min-height: 84px;
+  padding: 12px 12px 10px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(247, 248, 255, 0.72);
+  text-align: center;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease,
+    color 180ms ease;
+}
+
+.quick-slot-button:hover {
+  transform: translateY(-3px);
+  border-color: rgba(120, 245, 255, 0.28);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text);
+}
+
+.quick-slot-button:active {
+  transform: scale(0.98);
+}
+
+.quick-slot-button.is-active {
+  border-color: rgba(120, 245, 255, 0.5);
+  background:
+    linear-gradient(135deg, rgba(120, 245, 255, 0.16), rgba(255, 95, 183, 0.1)),
+    rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 0 28px rgba(120, 245, 255, 0.18),
+    inset 0 0 0 1px rgba(120, 245, 255, 0.14);
+  color: var(--text);
+}
+
+.quick-slot-button.drag-over {
+  transform: scale(1.04);
+  border-color: rgba(120, 245, 255, 0.7);
+  background: rgba(51, 144, 236, 0.24);
+  box-shadow: 0 0 36px rgba(51, 144, 236, 0.34);
+}
+
+.quick-slot-shop {
+  min-width: 92px;
+  background:
+    linear-gradient(180deg, rgba(120, 245, 255, 0.14), rgba(255, 95, 183, 0.08)),
+    rgba(10, 15, 32, 0.92);
+}
+
+.quick-slot-icon {
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.quick-slot-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.quick-slot-index {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.26);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  color: rgba(247, 248, 255, 0.62);
+}
+
 .dock-row-primary > * {
   min-height: 58px;
+}
+
+.shop-chip {
+  display: flex;
+  flex: 1 1 240px;
+  min-width: 0;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: rgba(7, 12, 28, 0.84);
+}
+
+.shop-chip span,
+.shop-chip strong {
+  margin: 0;
+}
+
+.shop-chip span {
+  font-family: 'IBM Plex Mono', monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.69rem;
+  color: var(--muted);
+}
+
+.shop-chip strong {
+  font-size: 0.96rem;
+  line-height: 1.2;
 }
 
 .dock-row-secondary button,
@@ -464,13 +552,12 @@ button {
     grid-template-columns: 1fr;
   }
 
-  .hud-bottom.is-collapsed {
-    left: 0;
-    width: 100%;
+  .quick-slot-button {
+    min-width: 78px;
+    min-height: 78px;
   }
 
-  .dock-panel.is-collapsed {
-    width: fit-content;
-    margin-left: auto;
+  .shop-chip {
+    flex-basis: 100%;
   }
 }
