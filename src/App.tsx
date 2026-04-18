@@ -1,6 +1,7 @@
 import { startTransition, useMemo, useState } from 'react'
 import { VisualizerStage } from './components/visualizer/VisualizerStage'
 import { VISUALIZERS } from './components/visualizer/visualizerRegistry'
+import { useGamepadVisualizerSwitch } from './hooks/useGamepadVisualizerSwitch'
 import { useMicrophoneAudio } from './hooks/useMicrophoneAudio'
 
 function wrapIndex(index: number) {
@@ -29,6 +30,11 @@ export default function App() {
     const nextIndex = Math.floor(Math.random() * VISUALIZERS.length)
     setScene(nextIndex)
   }
+
+  useGamepadVisualizerSwitch({
+    onPrevious: () => setScene(activeIndex - 1),
+    onNext: () => setScene(activeIndex + 1)
+  })
 
   const microphoneButtonLabel =
     status === 'starting'
@@ -146,7 +152,8 @@ export default function App() {
               </div>
 
               <p className="support-copy">
-                Лучше всего реагируют речь, хлопки и музыка рядом с микрофоном.
+                Лучше всего реагируют речь, хлопки и музыка рядом с микрофоном. На геймпаде
+                используйте L1 / R1 для переключения визуалов.
               </p>
 
               {error ? <p className="error-copy">{error}</p> : null}
