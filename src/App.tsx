@@ -16,6 +16,7 @@ function wrapIndex(index: number) {
 export default function App() {
   const [activeIndex, setActiveIndex] = useState(0)
   const [isShopOpen, setIsShopOpen] = useState(false)
+  const [isPanelHidden, setIsPanelHidden] = useState(false)
   const [quickSlots, setQuickSlots] = useState(() =>
     Array.from({ length: Math.min(9, VISUALIZERS.length) }, (_, index) => index)
   )
@@ -131,140 +132,164 @@ export default function App() {
         </div>
       </section>
 
-      <section className="hud hud-bottom">
-        <div className="dock-panel">
-          <div className="dock-row quick-slots-row">
+      <section className={`hud hud-bottom ${isPanelHidden ? 'is-collapsed' : ''}`}>
+        {isPanelHidden ? (
+          <div className="dock-panel dock-panel-collapsed">
             <button
-              className={`quick-slot-button quick-slot-shop ${isShopOpen ? 'is-active' : ''}`}
-              onClick={() => setIsShopOpen(true)}
+              aria-expanded="false"
+              className="dock-toggle"
+              onClick={() => setIsPanelHidden(false)}
               type="button"
             >
-              <span className="quick-slot-icon">🛍️</span>
-              <span className="quick-slot-label">Shop</span>
-              <span className="quick-slot-index">0</span>
-            </button>
-
-            {quickSlots.map((visualizerIndex, slotIndex) => {
-              const visualizer = VISUALIZERS[visualizerIndex]
-              const meta = getVisualizerMeta(visualizer)
-              const isActive = visualizerIndex === activeIndex
-
-              return (
-                <button
-                  className={`quick-slot-button ${isActive ? 'is-active' : ''}`}
-                  key={`${slotIndex}-${visualizer.id}`}
-                  onClick={() => setScene(visualizerIndex)}
-                  onDragLeave={(event) => {
-                    event.currentTarget.classList.remove('drag-over')
-                  }}
-                  onDragOver={(event) => {
-                    event.preventDefault()
-                    event.currentTarget.classList.add('drag-over')
-                  }}
-                  onDrop={(event) => {
-                    event.preventDefault()
-                    event.currentTarget.classList.remove('drag-over')
-                    const rawIndex = event.dataTransfer.getData('visualizerIndex')
-                    if (rawIndex) {
-                      updateQuickSlot(slotIndex, Number(rawIndex))
-                    }
-                  }}
-                  type="button"
-                >
-                  <span className="quick-slot-icon">{meta.icon}</span>
-                  <span className="quick-slot-label">{visualizer.label.split(' ')[0]}</span>
-                  <span className="quick-slot-index">{slotIndex + 1}</span>
-                </button>
-              )
-            })}
-          </div>
-
-          <div className="dock-row dock-row-primary">
-            <div className="shop-chip">
-              <span>Сейчас</span>
-              <strong>
-                {currentVisualizerMeta.icon} {currentVisualizer.label}
-              </strong>
-            </div>
-
-            <button
-              className={`mic-button ${status === 'live' ? 'is-live' : ''}`}
-              disabled={status === 'starting'}
-              onClick={status === 'live' ? stop : start}
-              type="button"
-            >
-              {microphoneButtonLabel}
-            </button>
-
-            <div className="meter-card">
-              <div className="meter-copy">
-                <span className="meter-label">Уровень входа</span>
-                <span className="meter-value">
-                  {Math.round(level * 100)}%
-                </span>
-              </div>
-              <div className="meter-track">
-                <div
-                  className="meter-fill"
-                  style={{ transform: `scaleX(${Math.max(0.04, level)})` }}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="dock-row dock-row-secondary">
-            <button onClick={() => setScene(activeIndex - 1)} type="button">
-              Назад
-            </button>
-            <button onClick={handleRandom} type="button">
-              Случайно
-            </button>
-            <button onClick={() => setScene(activeIndex + 1)} type="button">
-              Вперед
+              Показать панель
             </button>
           </div>
-
-          <label className="range-card">
-            <span>Чувствительность</span>
-            <input
-              max="2.2"
-              min="0.6"
-              onChange={(event) => setSensitivity(Number(event.target.value))}
-              step="0.05"
-              type="range"
-              value={sensitivity}
-            />
-            <strong>{sensitivity.toFixed(2)}x</strong>
-          </label>
-
-          <div className="scene-description">
-            <p>{currentVisualizer.caption}</p>
-          </div>
-
-          <div className="scene-strip" role="tablist" aria-label="Выбор сцены">
-            {VISUALIZERS.map((visualizer, index) => (
+        ) : (
+          <div className="dock-panel">
+            <div className="dock-row dock-row-toggle">
               <button
-                aria-selected={index === activeIndex}
-                className={index === activeIndex ? 'is-active' : ''}
-                key={visualizer.id}
-                onClick={() => setScene(index)}
-                role="tab"
+                aria-expanded="true"
+                className="dock-toggle"
+                onClick={() => setIsPanelHidden(true)}
                 type="button"
               >
-                <span>{visualizer.dimension}</span>
-                {visualizer.label}
+                Скрыть панель
               </button>
-            ))}
+            </div>
+
+            <div className="dock-row quick-slots-row">
+              <button
+                className={`quick-slot-button quick-slot-shop ${isShopOpen ? 'is-active' : ''}`}
+                onClick={() => setIsShopOpen(true)}
+                type="button"
+              >
+                <span className="quick-slot-icon">🛍️</span>
+                <span className="quick-slot-label">Shop</span>
+                <span className="quick-slot-index">0</span>
+              </button>
+
+              {quickSlots.map((visualizerIndex, slotIndex) => {
+                const visualizer = VISUALIZERS[visualizerIndex]
+                const meta = getVisualizerMeta(visualizer)
+                const isActive = visualizerIndex === activeIndex
+
+                return (
+                  <button
+                    className={`quick-slot-button ${isActive ? 'is-active' : ''}`}
+                    key={`${slotIndex}-${visualizer.id}`}
+                    onClick={() => setScene(visualizerIndex)}
+                    onDragLeave={(event) => {
+                      event.currentTarget.classList.remove('drag-over')
+                    }}
+                    onDragOver={(event) => {
+                      event.preventDefault()
+                      event.currentTarget.classList.add('drag-over')
+                    }}
+                    onDrop={(event) => {
+                      event.preventDefault()
+                      event.currentTarget.classList.remove('drag-over')
+                      const rawIndex = event.dataTransfer.getData('visualizerIndex')
+                      if (rawIndex) {
+                        updateQuickSlot(slotIndex, Number(rawIndex))
+                      }
+                    }}
+                    type="button"
+                  >
+                    <span className="quick-slot-icon">{meta.icon}</span>
+                    <span className="quick-slot-label">{visualizer.label.split(' ')[0]}</span>
+                    <span className="quick-slot-index">{slotIndex + 1}</span>
+                  </button>
+                )
+              })}
+            </div>
+
+            <div className="dock-row dock-row-primary">
+              <div className="shop-chip">
+                <span>Сейчас</span>
+                <strong>
+                  {currentVisualizerMeta.icon} {currentVisualizer.label}
+                </strong>
+              </div>
+
+              <button
+                className={`mic-button ${status === 'live' ? 'is-live' : ''}`}
+                disabled={status === 'starting'}
+                onClick={status === 'live' ? stop : start}
+                type="button"
+              >
+                {microphoneButtonLabel}
+              </button>
+
+              <div className="meter-card">
+                <div className="meter-copy">
+                  <span className="meter-label">Уровень входа</span>
+                  <span className="meter-value">
+                    {Math.round(level * 100)}%
+                  </span>
+                </div>
+                <div className="meter-track">
+                  <div
+                    className="meter-fill"
+                    style={{ transform: `scaleX(${Math.max(0.04, level)})` }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="dock-row dock-row-secondary">
+              <button onClick={() => setScene(activeIndex - 1)} type="button">
+                Назад
+              </button>
+              <button onClick={handleRandom} type="button">
+                Случайно
+              </button>
+              <button onClick={() => setScene(activeIndex + 1)} type="button">
+                Вперед
+              </button>
+            </div>
+
+            <label className="range-card">
+              <span>Чувствительность</span>
+              <input
+                max="2.2"
+                min="0.6"
+                onChange={(event) => setSensitivity(Number(event.target.value))}
+                step="0.05"
+                type="range"
+                value={sensitivity}
+              />
+              <strong>{sensitivity.toFixed(2)}x</strong>
+            </label>
+
+            <div className="scene-description">
+              <p>{currentVisualizer.caption}</p>
+            </div>
+
+            <div className="scene-strip" role="tablist" aria-label="Выбор сцены">
+              {VISUALIZERS.map((visualizer, index) => (
+                <button
+                  aria-selected={index === activeIndex}
+                  className={index === activeIndex ? 'is-active' : ''}
+                  key={visualizer.id}
+                  onClick={() => setScene(index)}
+                  role="tab"
+                  type="button"
+                >
+                  <span>{visualizer.dimension}</span>
+                  {visualizer.label}
+                </button>
+              ))}
+            </div>
+
+            <p className="support-copy">
+              Gamepad visualizer mode restored: <strong>L1 / R1</strong> листают hotbar,
+              <strong> D-Pad</strong> меняет speed/detail, <strong>L2 / R2</strong>{' '}
+              снижают и бустят intensity, <strong>touchpad</strong> открывает магазин.
+            </p>
+
+            {error ? <p className="error-copy">{error}</p> : null}
           </div>
-
-          <p className="support-copy">
-            Gamepad visualizer mode restored: <strong>L1 / R1</strong> листают hotbar,
-            <strong> D-Pad</strong> меняет speed/detail, <strong>L2 / R2</strong> снижают
-            и бустят intensity, <strong>touchpad</strong> открывает магазин.
-          </p>
-
-          {error ? <p className="error-copy">{error}</p> : null}
-        </div>
+        )}
       </section>
     </main>
   )

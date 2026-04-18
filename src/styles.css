@@ -105,6 +105,12 @@ button {
   padding-bottom: calc(16px + env(safe-area-inset-bottom));
 }
 
+.hud-bottom.is-collapsed {
+  left: auto;
+  right: 0;
+  width: auto;
+}
+
 .brand-chip,
 .scene-chip,
 .dock-panel {
@@ -199,6 +205,11 @@ button {
   flex-direction: column;
 }
 
+.dock-panel-collapsed {
+  padding: 12px;
+  border-radius: 999px;
+}
+
 .dock-panel::before {
   content: '';
   position: absolute;
@@ -227,6 +238,32 @@ button {
 
 .dock-row-primary {
   align-items: stretch;
+}
+
+.dock-row-toggle {
+  justify-content: flex-end;
+}
+
+.dock-toggle {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(7, 11, 24, 0.84);
+  color: var(--text);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.dock-toggle:hover {
+  border-color: rgba(120, 245, 255, 0.45);
+  background: rgba(10, 16, 34, 0.96);
+}
+
+.dock-toggle:active {
+  transform: scale(0.98);
 }
 
 .quick-slots-row {
@@ -550,6 +587,17 @@ button {
 
   .range-card {
     grid-template-columns: 1fr;
+  }
+
+  .hud-bottom.is-collapsed {
+    left: 0;
+    right: 0;
+    width: 100%;
+  }
+
+  .dock-panel-collapsed {
+    width: fit-content;
+    margin-left: auto;
   }
 
   .quick-slot-button {
