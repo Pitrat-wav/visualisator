@@ -105,6 +105,12 @@ button {
   padding-bottom: calc(16px + env(safe-area-inset-bottom));
 }
 
+.hud-bottom.is-collapsed {
+  width: auto;
+  right: 0;
+  left: auto;
+}
+
 .brand-chip,
 .scene-chip,
 .dock-panel {
@@ -197,6 +203,11 @@ button {
   padding: 18px;
 }
 
+.dock-panel.is-collapsed {
+  padding: 12px;
+  border-radius: 999px;
+}
+
 .dock-panel::before {
   content: '';
   position: absolute;
@@ -211,6 +222,34 @@ button {
   position: relative;
   display: flex;
   gap: 10px;
+}
+
+.dock-panel-head {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dock-toggle {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(7, 11, 24, 0.84);
+  color: var(--text);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.dock-toggle:active {
+  transform: scale(0.98);
+}
+
+.dock-toggle:hover {
+  border-color: rgba(120, 245, 255, 0.45);
+  background: rgba(10, 16, 34, 0.96);
 }
 
 .dock-row + .dock-row,
@@ -423,5 +462,15 @@ button {
 
   .range-card {
     grid-template-columns: 1fr;
+  }
+
+  .hud-bottom.is-collapsed {
+    left: 0;
+    width: 100%;
+  }
+
+  .dock-panel.is-collapsed {
+    width: fit-content;
+    margin-left: auto;
   }
 }

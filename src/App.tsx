@@ -10,6 +10,7 @@ function wrapIndex(index: number) {
 
 export default function App() {
   const [activeIndex, setActiveIndex] = useState(0)
+  const [isPanelHidden, setIsPanelHidden] = useState(false)
   const { error, level, sensitivity, setSensitivity, start, status, stop } =
     useMicrophoneAudio()
 
@@ -58,84 +59,99 @@ export default function App() {
         </div>
       </section>
 
-      <section className="hud hud-bottom">
-        <div className="dock-panel">
-          <div className="dock-row dock-row-primary">
+      <section className={`hud hud-bottom ${isPanelHidden ? 'is-collapsed' : ''}`}>
+        <div className={`dock-panel ${isPanelHidden ? 'is-collapsed' : ''}`}>
+          <div className="dock-panel-head">
             <button
-              className={`mic-button ${status === 'live' ? 'is-live' : ''}`}
-              disabled={status === 'starting'}
-              onClick={status === 'live' ? stop : start}
+              aria-expanded={!isPanelHidden}
+              className="dock-toggle"
+              onClick={() => setIsPanelHidden((value) => !value)}
               type="button"
             >
-              {microphoneButtonLabel}
+              {isPanelHidden ? 'Показать панель' : 'Скрыть панель'}
             </button>
+          </div>
 
-            <div className="meter-card">
-              <div className="meter-copy">
-                <span className="meter-label">Уровень входа</span>
-                <span className="meter-value">
-                  {Math.round(level * 100)}%
-                </span>
+          {!isPanelHidden && (
+            <>
+              <div className="dock-row dock-row-primary">
+                <button
+                  className={`mic-button ${status === 'live' ? 'is-live' : ''}`}
+                  disabled={status === 'starting'}
+                  onClick={status === 'live' ? stop : start}
+                  type="button"
+                >
+                  {microphoneButtonLabel}
+                </button>
+
+                <div className="meter-card">
+                  <div className="meter-copy">
+                    <span className="meter-label">Уровень входа</span>
+                    <span className="meter-value">
+                      {Math.round(level * 100)}%
+                    </span>
+                  </div>
+                  <div className="meter-track">
+                    <div
+                      className="meter-fill"
+                      style={{ transform: `scaleX(${Math.max(0.04, level)})` }}
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="meter-track">
-                <div
-                  className="meter-fill"
-                  style={{ transform: `scaleX(${Math.max(0.04, level)})` }}
+
+              <div className="dock-row dock-row-secondary">
+                <button onClick={() => setScene(activeIndex - 1)} type="button">
+                  Назад
+                </button>
+                <button onClick={handleRandom} type="button">
+                  Случайно
+                </button>
+                <button onClick={() => setScene(activeIndex + 1)} type="button">
+                  Вперед
+                </button>
+              </div>
+
+              <label className="range-card">
+                <span>Чувствительность</span>
+                <input
+                  max="2.2"
+                  min="0.6"
+                  onChange={(event) => setSensitivity(Number(event.target.value))}
+                  step="0.05"
+                  type="range"
+                  value={sensitivity}
                 />
+                <strong>{sensitivity.toFixed(2)}x</strong>
+              </label>
+
+              <div className="scene-description">
+                <p>{currentVisualizer.caption}</p>
               </div>
-            </div>
-          </div>
 
-          <div className="dock-row dock-row-secondary">
-            <button onClick={() => setScene(activeIndex - 1)} type="button">
-              Назад
-            </button>
-            <button onClick={handleRandom} type="button">
-              Случайно
-            </button>
-            <button onClick={() => setScene(activeIndex + 1)} type="button">
-              Вперед
-            </button>
-          </div>
+              <div className="scene-strip" role="tablist" aria-label="Выбор сцены">
+                {VISUALIZERS.map((visualizer, index) => (
+                  <button
+                    key={visualizer.id}
+                    aria-selected={index === activeIndex}
+                    className={index === activeIndex ? 'is-active' : ''}
+                    onClick={() => setScene(index)}
+                    role="tab"
+                    type="button"
+                  >
+                    <span>{visualizer.dimension}</span>
+                    {visualizer.label}
+                  </button>
+                ))}
+              </div>
 
-          <label className="range-card">
-            <span>Чувствительность</span>
-            <input
-              max="2.2"
-              min="0.6"
-              onChange={(event) => setSensitivity(Number(event.target.value))}
-              step="0.05"
-              type="range"
-              value={sensitivity}
-            />
-            <strong>{sensitivity.toFixed(2)}x</strong>
-          </label>
+              <p className="support-copy">
+                Лучше всего реагируют речь, хлопки и музыка рядом с микрофоном.
+              </p>
 
-          <div className="scene-description">
-            <p>{currentVisualizer.caption}</p>
-          </div>
-
-          <div className="scene-strip" role="tablist" aria-label="Выбор сцены">
-            {VISUALIZERS.map((visualizer, index) => (
-              <button
-                key={visualizer.id}
-                aria-selected={index === activeIndex}
-                className={index === activeIndex ? 'is-active' : ''}
-                onClick={() => setScene(index)}
-                role="tab"
-                type="button"
-              >
-                <span>{visualizer.dimension}</span>
-                {visualizer.label}
-              </button>
-            ))}
-          </div>
-
-          <p className="support-copy">
-            Лучше всего реагируют речь, хлопки и музыка рядом с микрофоном.
-          </p>
-
-          {error ? <p className="error-copy">{error}</p> : null}
+              {error ? <p className="error-copy">{error}</p> : null}
+            </>
+          )}
         </div>
       </section>
     </main>
